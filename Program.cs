@@ -40,6 +40,8 @@ namespace CSharpTelegramBot
                         XORO x1 = new XORO();
                         if (x1.PlayGame(message) == 1)
                             return;
+                        else
+                            return;
                         break;
 
                     default:
