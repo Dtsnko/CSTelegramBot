@@ -39,8 +39,7 @@ namespace CSharpTelegramBot
                     case "/xoro":
                      
                         XORO x1 = new XORO();
-                        if(x1.PlayGame(message) != 1)
-                            return;
+                        x1.PlayGame(message);
                         break;
 
                     default:
