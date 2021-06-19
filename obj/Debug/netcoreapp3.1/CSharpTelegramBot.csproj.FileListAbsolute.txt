@@ -1,0 +1,16 @@
+E:\TelegramBot\CSharpTelegramBot\CSharpTelegramBot\bin\Debug\netcoreapp3.1\CSharpTelegramBot.exe
+E:\TelegramBot\CSharpTelegramBot\CSharpTelegramBot\bin\Debug\netcoreapp3.1\CSharpTelegramBot.deps.json
+E:\TelegramBot\CSharpTelegramBot\CSharpTelegramBot\bin\Debug\netcoreapp3.1\CSharpTelegramBot.runtimeconfig.json
+E:\TelegramBot\CSharpTelegramBot\CSharpTelegramBot\bin\Debug\netcoreapp3.1\CSharpTelegramBot.runtimeconfig.dev.json
+E:\TelegramBot\CSharpTelegramBot\CSharpTelegramBot\bin\Debug\netcoreapp3.1\CSharpTelegramBot.dll
+E:\TelegramBot\CSharpTelegramBot\CSharpTelegramBot\bin\Debug\netcoreapp3.1\CSharpTelegramBot.pdb
+E:\TelegramBot\CSharpTelegramBot\CSharpTelegramBot\obj\Debug\netcoreapp3.1\CSharpTelegramBot.csprojAssemblyReference.cache
+E:\TelegramBot\CSharpTelegramBot\CSharpTelegramBot\obj\Debug\netcoreapp3.1\CSharpTelegramBot.AssemblyInfoInputs.cache
+E:\TelegramBot\CSharpTelegramBot\CSharpTelegramBot\obj\Debug\netcoreapp3.1\CSharpTelegramBot.AssemblyInfo.cs
+E:\TelegramBot\CSharpTelegramBot\CSharpTelegramBot\obj\Debug\netcoreapp3.1\CSharpTelegramBot.csproj.CoreCompileInputs.cache
+E:\TelegramBot\CSharpTelegramBot\CSharpTelegramBot\obj\Debug\netcoreapp3.1\CSharpTelegramBot.dll
+E:\TelegramBot\CSharpTelegramBot\CSharpTelegramBot\obj\Debug\netcoreapp3.1\CSharpTelegramBot.pdb
+E:\TelegramBot\CSharpTelegramBot\CSharpTelegramBot\obj\Debug\netcoreapp3.1\CSharpTelegramBot.genruntimeconfig.cache
+E:\TelegramBot\CSharpTelegramBot\CSharpTelegramBot\bin\Debug\netcoreapp3.1\Newtonsoft.Json.dll
+E:\TelegramBot\CSharpTelegramBot\CSharpTelegramBot\bin\Debug\netcoreapp3.1\Telegram.Bot.dll
+E:\TelegramBot\CSharpTelegramBot\CSharpTelegramBot\obj\Debug\netcoreapp3.1\CSharpTelegramBot.csproj.CopyComplete
