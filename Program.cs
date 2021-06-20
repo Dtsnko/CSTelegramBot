@@ -5,12 +5,17 @@ using System.Text.Json;
 using System.IO;
 using Telegram.Bot.Types.ReplyMarkups;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CSharpTelegramBot
 {
     static class Program
     {
         public static TelegramBotClient Worker = new TelegramBotClient("1743603163:AAF6GACSicfQPets7eYxjhiV-YTy3N8AL48");
+        public static Telegram.Bot.Types.ChatId[] chats = new Telegram.Bot.Types.ChatId[10];
+        public static XORO[] games = new XORO[10];
+        static int gameId = 0;
+
         static void Main(string[] args)
         {
             var me = Worker.GetMeAsync().Result;
@@ -24,10 +29,12 @@ namespace CSharpTelegramBot
         public async static void Worker_OnMessage(object sender, Telegram.Bot.Args.MessageEventArgs e)
         {
             var message = e.Message;
+            
             if (message == null)
                 return;
             if (message.Type != MessageType.Text)
                 return;
+                
             else
             {
                 switch (message.Text)
@@ -36,9 +43,37 @@ namespace CSharpTelegramBot
                         await Worker.SendTextMessageAsync(message.Chat.Id, "Чтобы поиграть крестики нолики набери /xoro", replyMarkup: GetButtons());
                         break;
                     case "/xoro":
-                        XORO x1 = new XORO(message);
-                        break;
+                        if (chats.Contains(message.Chat.Id))
+                        {
+                            int findId = Array.IndexOf(chats, message.Chat.Id);
+                            await games[findId].ContinueGame(message);
 
+                        }
+                        else
+                        {
+                            chats[gameId] = message.Chat.Id;
+                            XORO x1 = new XORO();
+                            games[gameId] = x1;
+                            await games[gameId].PlayGame(message);
+                            gameId++;
+                        }
+                        break;
+                    case "/vote":
+                        if (chats.Contains(message.Chat.Id))
+                        {
+                            int findId = Array.IndexOf(chats, message.Chat.Id);
+                            await games[findId].ContinueGame(message);
+
+                        }
+                        else
+                        {
+                            chats[gameId] = message.Chat.Id;
+                            XORO x1 = new XORO();
+                            games[gameId] = x1;
+                            await games[gameId].PlayGame(message);
+                            gameId++;
+                        }
+                        break;
                     default:
                         break;
                 }
