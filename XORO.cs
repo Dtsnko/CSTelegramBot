@@ -15,11 +15,18 @@ namespace CSharpTelegramBot
     {
         string[] boxes = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
         int player = 0;
-        int numbOfTurns = 2;
-        int numOfPlayers = 0;
+        int numOfTurns = 2;
+        int numOfPlayers = 1;
+        Telegram.Bot.Types.Message msg;
         Telegram.Bot.Types.Message[] playersId = new Telegram.Bot.Types.Message[2];
+        public XORO(Telegram.Bot.Types.Message message)
+        {
+            msg = message;
+            playersId[0] = msg;
+            PlayGame();
+        }
 
-        public async Task PlayGame(Telegram.Bot.Types.Message msg)
+        public async Task PlayGame()
         {
             
                 await Task.Run(() => Program.Worker.OnMessage -= Program.Worker_OnMessage);
@@ -161,8 +168,8 @@ namespace CSharpTelegramBot
         }
         void ChangePlayer()
         {
-            numbOfTurns++;
-            player = numbOfTurns % 2;
+            numOfTurns++;
+            player = numOfTurns % 2;
         }
         void ShowBoxes(Telegram.Bot.Types.Message message)
         {

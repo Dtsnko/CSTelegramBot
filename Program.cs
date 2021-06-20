@@ -36,8 +36,7 @@ namespace CSharpTelegramBot
                         await Worker.SendTextMessageAsync(message.Chat.Id, "Чтобы поиграть крестики нолики набери /xoro", replyMarkup: GetButtons());
                         break;
                     case "/xoro":
-                        XORO x1 = new XORO();
-                        await x1.PlayGame(message);
+                        XORO x1 = new XORO(message);
                         break;
 
                     default:
