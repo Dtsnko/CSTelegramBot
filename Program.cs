@@ -24,7 +24,6 @@ namespace CSharpTelegramBot
         public async static void Worker_OnMessage(object sender, Telegram.Bot.Args.MessageEventArgs e)
         {
             var message = e.Message;
-            string result;
             if (message == null)
                 return;
             if (message.Type != MessageType.Text)
@@ -39,8 +38,6 @@ namespace CSharpTelegramBot
                     case "/xoro":
                         XORO x1 = new XORO();
                         if (x1.PlayGame(message) == 1)
-                            return;
-                        else
                             return;
                         break;
 
