@@ -6,6 +6,8 @@ using System.IO;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types.ReplyMarkups;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace CSharpTelegramBot
 {
@@ -17,20 +19,20 @@ namespace CSharpTelegramBot
         int numOfPlayers = 0;
         Telegram.Bot.Types.Message[] playersId = new Telegram.Bot.Types.Message[2];
 
-        public int PlayGame(Telegram.Bot.Types.Message msg)
+        public async Task PlayGame(Telegram.Bot.Types.Message msg)
         {
             
-                Program.Worker.OnMessage -= Program.Worker_OnMessage;
-                Program.Worker.OnMessage += GameWorker_OnMessage;
-                Program.Worker.SendTextMessageAsync(msg.Chat.Id, "+--+--+ \n" +
+                await Task.Run(() => Program.Worker.OnMessage -= Program.Worker_OnMessage);
+                await Task.Run(() => Program.Worker.OnMessage += GameWorker_OnMessage);
+                await Program.Worker.SendTextMessageAsync(msg.Chat.Id, "+--+--+ \n" +
                 $"|{boxes[0]}|{boxes[1]}|{boxes[2]}| \n" +
                 "+--+--+ \n" +
                 $"|{boxes[3]}|{boxes[4]}|{boxes[5]}| \n" +
                 "+--+--+ \n" +
                 $"|{boxes[6]}|{boxes[7]}|{boxes[8]}| \n" +
                 "+--+--+ \n");
-                Program.Worker.SendTextMessageAsync(msg.Chat.Id, $"Напиши /vote, чтобы быть игроком", replyMarkup: GetInvited());
-                return 1;
+                await Program.Worker.SendTextMessageAsync(msg.Chat.Id, $"Напиши /vote, чтобы быть игроком", replyMarkup: GetInvited());
+                return;
         }
 
         private IReplyMarkup GetButtons()
