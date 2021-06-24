@@ -28,10 +28,12 @@ namespace CSharpTelegramBot
         public async static void Worker_OnMessage(object sender, Telegram.Bot.Args.MessageEventArgs e)
         {
             var message = e.Message;
+            
             if (message == null)
                 return;
             if (message.Type != MessageType.Text)
                 return;
+                
             else
             {
                 switch (message.Text)
@@ -62,7 +64,22 @@ namespace CSharpTelegramBot
 
                         }
                         break;
+                    case "/vote":
+                        if (chats.Contains(message.Chat.Id))
+                        {
+                            int findId = Array.IndexOf(chats, message.Chat.Id);
+                            await games[findId].ContinueGame(message);
 
+                        }
+                        else
+                        {
+                            chats[gameId] = message.Chat.Id;
+                            XORO x1 = new XORO();
+                            games[gameId] = x1;
+                            await games[gameId].PlayGame(message);
+                            gameId++;
+                        }
+                        break;
                     default:
                         break;
                 }

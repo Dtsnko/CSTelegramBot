@@ -84,7 +84,7 @@ namespace CSharpTelegramBot
                 numOfPlayers++;
                 await Program.Worker.SendTextMessageAsync(message.Chat.Id, "Игрок принят", replyMarkup: GetInvited());
                 if (numOfPlayers == 2)
-                   await Program.Worker.SendTextMessageAsync(message.Chat.Id, $"Игроки набраны, игрок {playersId[player].From.Username} ходит", replyMarkup: GetButtons());
+                    await Program.Worker.SendTextMessageAsync(message.Chat.Id, $"Игроки набраны, игрок {playersId[player].From.Username} ходит", replyMarkup: GetButtons());
                 return;
             }
             else if (numOfPlayers == 2 && message.Text != "/vote")
@@ -111,6 +111,69 @@ namespace CSharpTelegramBot
             else
                 return;
         }
+
+        private IReplyMarkup GetButtons()
+        {
+            return new ReplyKeyboardMarkup
+            {
+                Keyboard = new List<List<KeyboardButton>>
+                {
+                    new List<KeyboardButton> { new KeyboardButton { Text = "/1" }, new KeyboardButton {Text = "/2" }, new KeyboardButton { Text = "/3" } },
+                    new List<KeyboardButton> { new KeyboardButton { Text = "/4" }, new KeyboardButton {Text = "/5" }, new KeyboardButton { Text = "/6" } },
+                    new List<KeyboardButton> { new KeyboardButton { Text = "/7" }, new KeyboardButton {Text = "/8" }, new KeyboardButton { Text = "/9" } },
+                    new List<KeyboardButton> { new KeyboardButton { Text = "/stop"} }
+                }
+            };
+        }
+        private IReplyMarkup GetInvited()
+        {
+            return new ReplyKeyboardMarkup
+            {
+                Keyboard = new List<List<KeyboardButton>>
+                {
+                    new List<KeyboardButton> { new KeyboardButton { Text = "/vote" } },
+                    
+                }
+            };
+        }
+
+        //async void GameWorker_OnMessage(object sender, MessageEventArgs e)
+        //{
+        //    var message = e.Message;
+        //    if (numOfPlayers < 2 && message.Text == "/vote")
+        //    {
+        //        playersId[numOfPlayers] = message;
+        //        numOfPlayers++;
+        //        await Program.Worker.SendTextMessageAsync(message.Chat.Id, "Игрок принят", replyMarkup: GetInvited());
+        //        if (numOfPlayers == 2)
+        //           await Program.Worker.SendTextMessageAsync(message.Chat.Id, $"Игроки набраны, игрок {playersId[player].From.Username} ходит", replyMarkup: GetButtons());
+        //        return;
+        //    }
+        //    else if (numOfPlayers == 2 && message.Text != "/vote")
+        //    {
+        //        if (message.From.Username != playersId[player].From.Username)
+        //            return;
+        //        if (message.Text == "/stop")
+        //        {
+        //            await Program.Worker.SendTextMessageAsync(message.Chat.Id, "Прекращаю..", replyMarkup: Program.GetButtons());
+        //            Program.Worker.OnMessage -= GameWorker_OnMessage;
+        //            Program.Worker.OnMessage += Program.Worker_OnMessage;
+        //            return;
+        //        }
+        //        else
+        //        {
+        //            await Program.Worker.SendTextMessageAsync(message.Chat.Id, $"Игрок {playersId[player].From.Username} походил", replyMarkup: GetButtons());
+        //            CheckBoxes(message);
+        //        }
+        //    }
+        //    else if (numOfPlayers == 2 && message.Text == "/vote")
+        //    {
+        //        await Program.Worker.SendTextMessageAsync(message.Chat.Id, "Слишком много игроков", replyMarkup: GetButtons());
+        //        return;
+        //    }
+        //    else
+        //        return;
+        //}
         void CheckBoxes(Telegram.Bot.Types.Message message)
         {
             string text = message.Text.Substring(1);
