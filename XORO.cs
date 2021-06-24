@@ -8,7 +8,6 @@ using Telegram.Bot.Types.ReplyMarkups;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Linq;
 
 namespace CSharpTelegramBot
 {
@@ -18,19 +17,20 @@ namespace CSharpTelegramBot
         int player = 0;
         int numOfTurns = 2;
         int numOfPlayers = 1;
-        int gameId;
         Telegram.Bot.Types.Message msg;
         Telegram.Bot.Types.Message[] playersId = new Telegram.Bot.Types.Message[2];
-        public XORO(Telegram.Bot.Types.Message message, int id)
+        public XORO(Telegram.Bot.Types.Message message)
         {
             msg = message;
-            gameId = id;
             playersId[0] = msg;
+            PlayGame();
         }
 
-        public async Task StartGame()
+        public async Task PlayGame()
         {
-                Program.Worker.OnMessage += GameWorker_OnMessage;
+            
+                await Task.Run(() => Program.Worker.OnMessage -= Program.Worker_OnMessage);
+                await Task.Run(() => Program.Worker.OnMessage += GameWorker_OnMessage);
                 await Program.Worker.SendTextMessageAsync(msg.Chat.Id, "+--+--+ \n" +
                 $"|{boxes[0]}|{boxes[1]}|{boxes[2]}| \n" +
                 "+--+--+ \n" +
@@ -38,14 +38,8 @@ namespace CSharpTelegramBot
                 "+--+--+ \n" +
                 $"|{boxes[6]}|{boxes[7]}|{boxes[8]}| \n" +
                 "+--+--+ \n");
-                Program.Worker.SendTextMessageAsync(msg.Chat.Id, $"Напиши /vote, чтобы быть игроком", replyMarkup: GetInvited());
+                await Program.Worker.SendTextMessageAsync(msg.Chat.Id, $"Напиши /vote, чтобы быть игроком", replyMarkup: GetInvited());
                 return;
-        } 
-        public async Task ContinueGame()
-        {
-            Program.Worker.OnMessage -= GameWorker_OnMessage;
-            Program.Worker.OnMessage += GameWorker_OnMessage;
-            
         }
 
         private IReplyMarkup GetButtons()
@@ -76,8 +70,6 @@ namespace CSharpTelegramBot
         async void GameWorker_OnMessage(object sender, MessageEventArgs e)
         {
             var message = e.Message;
-            if (gameId != Array.IndexOf(Program.chats, message.Chat.Id)) 
-                return;     
             if (numOfPlayers < 2 && message.Text == "/vote")
             {
                 playersId[numOfPlayers] = message;
@@ -94,7 +86,8 @@ namespace CSharpTelegramBot
                 if (message.Text == "/stop")
                 {
                     await Program.Worker.SendTextMessageAsync(message.Chat.Id, "Прекращаю..", replyMarkup: Program.GetButtons());
-                    EndGame();
+                    Program.Worker.OnMessage -= GameWorker_OnMessage;
+                    Program.Worker.OnMessage += Program.Worker_OnMessage;
                     return;
                 }
                 else
@@ -210,7 +203,8 @@ namespace CSharpTelegramBot
             if (checker == 9)
             {
                 Program.Worker.SendTextMessageAsync(message.Chat.Id, $"Ничья", replyMarkup: Program.GetButtons());
-                EndGame();
+                Program.Worker.OnMessage -= GameWorker_OnMessage;
+                Program.Worker.OnMessage += Program.Worker_OnMessage;
                 return;
             }
             if (boxes[0] == boxes[4] && boxes[4] == boxes[8] ||
@@ -225,7 +219,8 @@ namespace CSharpTelegramBot
             )
             {
                 Program.Worker.SendTextMessageAsync(message.Chat.Id, $"Игрок {playersId[player].From.Username} выиграл", replyMarkup: Program.GetButtons());
-                EndGame();
+                Program.Worker.OnMessage -= GameWorker_OnMessage;
+                Program.Worker.OnMessage += Program.Worker_OnMessage;
             }
             else
             {
@@ -249,13 +244,6 @@ namespace CSharpTelegramBot
             $"|{boxes[6]}|{boxes[7]}|{boxes[8]}| \n" +
             "+--+--+ \n", replyMarkup: GetButtons());
         }
-        void EndGame()
-        {
-            Program.Worker.OnMessage -= GameWorker_OnMessage;
-            Program.chats[gameId] = 0;
-            Program.games[gameId] = null;
-        }
-        
 
     }
 
