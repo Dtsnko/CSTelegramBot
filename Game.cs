@@ -6,8 +6,8 @@ namespace CSharpTelegramBot
 {
     public abstract class Game
     {
-       static string name { get; set; }
-       static int id { get; set; }
+        int gameid { get; set; }
+        Telegram.Bot.Types.Message msg { get; set; }
 
 
     }

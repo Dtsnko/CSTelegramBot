@@ -12,8 +12,10 @@ namespace CSharpTelegramBot
     static class Program
     {
         public static TelegramBotClient Worker = new TelegramBotClient("1743603163:AAF6GACSicfQPets7eYxjhiV-YTy3N8AL48");
-        public static long[] chats = new long[10];
-        public static XORO[] games = new XORO[10];
+        public static long[] XOROchats = new long[10];
+        public static XORO[] XOROgames = new XORO[10];
+        public static long[] SUEFAchats = new long[10];
+        public static SUEFA[] SUEFAgames = new SUEFA[10];
         static void Main(string[] args)
         {
             var me = Worker.GetMeAsync().Result;
@@ -39,22 +41,45 @@ namespace CSharpTelegramBot
                         await Worker.SendTextMessageAsync(message.Chat.Id, "Чтобы поиграть крестики нолики набери /xoro", replyMarkup: GetButtons());
                         break;
                     case "/xoro":
-                        if (chats.Contains(message.Chat.Id)) 
+                        if (XOROchats.Contains(message.Chat.Id)) 
                         {
                             await Worker.SendTextMessageAsync(message.Chat.Id, "Игра существует, присоединение");
-                            int findId = Array.IndexOf(chats, message.Chat.Id); //finding game that already started
-                            await games[findId].ContinueGame(); //continue game
+                            int findId = Array.IndexOf(XOROchats, message.Chat.Id); //finding game that already started
+                            await XOROgames[findId].ContinueGame(); //continue game
                         }
                         else
                         {
-                            for (int i = 0; i < chats.Length; i++) //finding free space in array games
+                            for (int i = 0; i < XOROchats.Length; i++) //finding free space in array games
                             {
-                                if (games[i] == null)
+                                if (XOROgames[i] == null)
                                 {
                                     await Worker.SendTextMessageAsync(message.Chat.Id, $"Игра создана, {i}");
-                                    games[i] = new XORO(message, i); //creating new game
-                                    chats[i] = message.Chat.Id; //creating space for new chat
-                                    await games[i].StartGame();
+                                    XOROgames[i] = new XORO(message, i); //creating new game
+                                    XOROchats[i] = message.Chat.Id; //creating space for new chat
+                                    await XOROgames[i].StartGame();
+                                    break;
+                                }
+                            }
+
+                        }
+                        break;
+                    case "/suefa":
+                        if (!SUEFAchats.Contains(message.Chat.Id))
+                        {
+                            await Worker.SendTextMessageAsync(message.Chat.Id, "Игра существует, присоединение");
+                            int findId = Array.IndexOf(SUEFAchats, message.Chat.Id); //finding game that already started
+                            /*await SUEFAgames[findId].ContinueGame();*/ //continue game
+                        }
+                        else
+                        {
+                            for (int i = 0; i < SUEFAchats.Length; i++) //finding free space in array games
+                            {
+                                if (SUEFAgames[i] == null)
+                                {
+                                    await Worker.SendTextMessageAsync(message.Chat.Id, $"Игра создана, {i}");
+                                    SUEFAgames[i] = new SUEFA(message, i); //creating new game
+                                    SUEFAchats[i] = message.Chat.Id; //creating space for new chat
+                                    SUEFAgames[i].StartGame();
                                     break;
                                 }
                             }

@@ -76,7 +76,7 @@ namespace CSharpTelegramBot
         async void GameWorker_OnMessage(object sender, MessageEventArgs e)
         {
             var message = e.Message;
-            if (gameId != Array.IndexOf(Program.chats, message.Chat.Id))
+            if (gameId != Array.IndexOf(Program.XOROchats, message.Chat.Id))
             {
                 return;
             }
@@ -191,8 +191,8 @@ namespace CSharpTelegramBot
         void EndGame()
         {
             Program.Worker.OnMessage -= GameWorker_OnMessage;
-            Program.chats[gameId] = 0;
-            Program.games[gameId] = null;
+            Program.XOROchats[gameId] = 0;
+            Program.XOROgames[gameId] = null;
         }
         
 
