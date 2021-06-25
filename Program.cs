@@ -39,14 +39,7 @@ namespace CSharpTelegramBot
                         await Worker.SendTextMessageAsync(message.Chat.Id, "Чтобы поиграть крестики нолики набери /xoro", replyMarkup: GetButtons());
                         break;
                     case "/xoro":
-                        if (chats.Contains(message.Chat.Id)) 
-                        {
-                            await Worker.SendTextMessageAsync(message.Chat.Id, "Игра существует, присоединение");
-                            int findId = Array.IndexOf(chats, message.Chat.Id); //finding game that already started
-                            await games[findId].ContinueGame(); //continue game
-                        }
-                        else
-                        {
+                        if (!chats.Contains(message.Chat.Id)) 
                             for (int i = 0; i < chats.Length; i++) //finding free space in array games
                             {
                                 if (games[i] == null)
@@ -58,8 +51,6 @@ namespace CSharpTelegramBot
                                     break;
                                 }
                             }
-
-                        }
                         break;
 
                     default:

@@ -41,12 +41,6 @@ namespace CSharpTelegramBot
                 await Program.Worker.SendTextMessageAsync(msg.Chat.Id, $"Напиши /vote, чтобы быть игроком", replyMarkup: GetInvited());
                 return;
         } 
-        public async Task ContinueGame()
-        {
-            Program.Worker.OnMessage -= GameWorker_OnMessage;
-            Program.Worker.OnMessage += GameWorker_OnMessage;
-            
-        }
 
         private IReplyMarkup GetButtons()
         {
