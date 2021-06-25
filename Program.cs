@@ -41,14 +41,7 @@ namespace CSharpTelegramBot
                         await Worker.SendTextMessageAsync(message.Chat.Id, "Чтобы поиграть крестики нолики набери /xoro", replyMarkup: GetButtons());
                         break;
                     case "/xoro":
-                        if (XOROchats.Contains(message.Chat.Id)) 
-                        {
-                            await Worker.SendTextMessageAsync(message.Chat.Id, "Игра существует, присоединение");
-                            int findId = Array.IndexOf(XOROchats, message.Chat.Id); //finding game that already started
-                            await XOROgames[findId].ContinueGame(); //continue game
-                        }
-                        else
-                        {
+                        if (!XOROchats.Contains(message.Chat.Id)) 
                             for (int i = 0; i < XOROchats.Length; i++) //finding free space in array games
                             {
                                 if (XOROgames[i] == null)
@@ -60,18 +53,9 @@ namespace CSharpTelegramBot
                                     break;
                                 }
                             }
-
-                        }
                         break;
                     case "/suefa":
                         if (!SUEFAchats.Contains(message.Chat.Id))
-                        {
-                            await Worker.SendTextMessageAsync(message.Chat.Id, "Игра существует, присоединение");
-                            int findId = Array.IndexOf(SUEFAchats, message.Chat.Id); //finding game that already started
-                            /*await SUEFAgames[findId].ContinueGame();*/ //continue game
-                        }
-                        else
-                        {
                             for (int i = 0; i < SUEFAchats.Length; i++) //finding free space in array games
                             {
                                 if (SUEFAgames[i] == null)
@@ -83,8 +67,6 @@ namespace CSharpTelegramBot
                                     break;
                                 }
                             }
-
-                        }
                         break;
 
                     default:
@@ -100,7 +82,7 @@ namespace CSharpTelegramBot
             {
                 Keyboard = new List<List<KeyboardButton>>
                 {
-                    new List<KeyboardButton> { new KeyboardButton { Text = "/xoro" } }
+                    new List<KeyboardButton> { new KeyboardButton { Text = "/xoro" }, new KeyboardButton { Text = "/suefa" } }
                 }
             };
         }

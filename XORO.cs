@@ -30,7 +30,7 @@ namespace CSharpTelegramBot
 
         public async Task StartGame()
         {
-                Program.Worker.OnMessage += GameWorker_OnMessage;
+                Program.Worker.OnMessage += XORO_OnMessage;
                 await Program.Worker.SendTextMessageAsync(msg.Chat.Id, "+--+--+ \n" +
                 $"|{boxes[0]}|{boxes[1]}|{boxes[2]}| \n" +
                 "+---+---+ \n" +
@@ -43,8 +43,8 @@ namespace CSharpTelegramBot
         } 
         public async Task ContinueGame()
         {
-            Program.Worker.OnMessage -= GameWorker_OnMessage;
-            Program.Worker.OnMessage += GameWorker_OnMessage;
+            Program.Worker.OnMessage -= XORO_OnMessage;
+            Program.Worker.OnMessage += XORO_OnMessage;
             
         }
 
@@ -73,7 +73,7 @@ namespace CSharpTelegramBot
             };
         }
 
-        async void GameWorker_OnMessage(object sender, MessageEventArgs e)
+        async void XORO_OnMessage(object sender, MessageEventArgs e)
         {
             var message = e.Message;
             if (gameId != Array.IndexOf(Program.XOROchats, message.Chat.Id))
@@ -190,7 +190,7 @@ namespace CSharpTelegramBot
         }
         void EndGame()
         {
-            Program.Worker.OnMessage -= GameWorker_OnMessage;
+            Program.Worker.OnMessage -= XORO_OnMessage;
             Program.XOROchats[gameId] = 0;
             Program.XOROgames[gameId] = null;
         }
