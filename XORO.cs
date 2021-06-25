@@ -33,12 +33,12 @@ namespace CSharpTelegramBot
                 Program.Worker.OnMessage += GameWorker_OnMessage;
                 await Program.Worker.SendTextMessageAsync(msg.Chat.Id, "+--+--+ \n" +
                 $"|{boxes[0]}|{boxes[1]}|{boxes[2]}| \n" +
-                "+--+--+ \n" +
+                "+---+---+ \n" +
                 $"|{boxes[3]}|{boxes[4]}|{boxes[5]}| \n" +
-                "+--+--+ \n" +
+                "+---+---+ \n" +
                 $"|{boxes[6]}|{boxes[7]}|{boxes[8]}| \n" +
-                "+--+--+ \n");
-                Program.Worker.SendTextMessageAsync(msg.Chat.Id, $"Напиши /vote, чтобы быть игроком", replyMarkup: GetInvited());
+                "+---+---+ \n");
+                await Program.Worker.SendTextMessageAsync(msg.Chat.Id, $"Напиши /vote, чтобы быть игроком", replyMarkup: GetInvited());
                 return;
         } 
         public async Task ContinueGame()
@@ -76,8 +76,10 @@ namespace CSharpTelegramBot
         async void GameWorker_OnMessage(object sender, MessageEventArgs e)
         {
             var message = e.Message;
-            if (gameId != Array.IndexOf(Program.chats, message.Chat.Id)) 
-                return;     
+            if (gameId != Array.IndexOf(Program.chats, message.Chat.Id))
+            {
+                return;
+            }
             if (numOfPlayers < 2 && message.Text == "/vote")
             {
                 playersId[numOfPlayers] = message;

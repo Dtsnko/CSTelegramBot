@@ -14,7 +14,6 @@ namespace CSharpTelegramBot
         public static TelegramBotClient Worker = new TelegramBotClient("1743603163:AAF6GACSicfQPets7eYxjhiV-YTy3N8AL48");
         public static long[] chats = new long[10];
         public static XORO[] games = new XORO[10];
-        static int gameId = 0;
         static void Main(string[] args)
         {
             var me = Worker.GetMeAsync().Result;
@@ -48,12 +47,12 @@ namespace CSharpTelegramBot
                         }
                         else
                         {
-                            await Worker.SendTextMessageAsync(message.Chat.Id, "Игра создана");
                             for (int i = 0; i < chats.Length; i++) //finding free space in array games
                             {
                                 if (games[i] == null)
                                 {
-                                    games[i] = new XORO(message, gameId); //creating new game
+                                    await Worker.SendTextMessageAsync(message.Chat.Id, $"Игра создана, {i}");
+                                    games[i] = new XORO(message, i); //creating new game
                                     chats[i] = message.Chat.Id; //creating space for new chat
                                     await games[i].StartGame();
                                     break;
