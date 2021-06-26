@@ -69,8 +69,8 @@ namespace CSharpTelegramBot
         private void EndGame()
         {
             Program.Worker.OnMessage -= SUEFA_OnMessage;
-            Program.XOROchats[gameId] = 0;
-            Program.XOROgames[gameId] = null;
+            Program.SUEFAchats[gameId] = 0;
+            Program.SUEFAgames[gameId] = null;
         }
         private IReplyMarkup GetInvited()
         {
