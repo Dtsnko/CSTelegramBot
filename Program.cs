@@ -41,6 +41,7 @@ namespace CSharpTelegramBot
                         await Worker.SendTextMessageAsync(message.Chat.Id, "Выбери игру", replyMarkup: GetButtons());
                         break;
                     case "/xoro":
+
                         if (!XOROchats.Contains(message.Chat.Id)) 
                             for (int i = 0; i < XOROchats.Length; i++) //finding free space in array of games
                             {
