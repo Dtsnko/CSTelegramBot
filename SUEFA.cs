@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -9,16 +12,23 @@ namespace CSharpTelegramBot
     class SUEFA : Game
     {
         int player = 0;
-        int numOfTurns = 2;
+        int numOfTurns = 0;
         int numOfPlayers = 1;
         int gameId;
         Telegram.Bot.Types.Message msg;
-        Telegram.Bot.Types.Message[] playersId = new Telegram.Bot.Types.Message[2];
+        long[] playersId = new long[2];
+        enum objects
+        {
+            Ножницы,
+            Камень,
+            Бумага
+        }
+        objects[] answers = new objects[2];
         public SUEFA (Telegram.Bot.Types.Message message, int id)
         {
             msg = message;
             gameId = id;
-            playersId[0] = msg;
+            playersId[0] = msg.From.Id;
         }
         public async void StartGame()
         {
@@ -35,14 +45,15 @@ namespace CSharpTelegramBot
             }
             if (numOfPlayers < 2 && message.Text == "/vote")
             {
-                playersId[numOfPlayers] = message;
+                playersId[numOfPlayers] = message.From.Id;
                 numOfPlayers++;
                 await Program.Worker.SendTextMessageAsync(message.Chat.Id, $"Игрок принят");
+                CountingDown();
                 return;
             }
             else if (numOfPlayers == 2 && message.Text != "/vote")
             {
-                if (message.From.Username != playersId[player].From.Username)
+                if (!playersId.Contains(message.From.Id))
                     return;
                 if (message.Text == "/stop")
                 {
@@ -52,8 +63,25 @@ namespace CSharpTelegramBot
                 }
                 else
                 {
-                    await Program.Worker.SendTextMessageAsync(message.Chat.Id, $"Игрок {playersId[player].From.Username} походил");
-                    // Game starts here
+                    Program.Worker.DeleteMessageAsync(message.Chat.Id, message.MessageId);
+                    if (numOfTurns < 2)
+                        switch (message.Text)
+                        {
+                            case "/Ножницы":
+                                answers[numOfTurns] = objects.Ножницы;
+                                numOfTurns++;
+                                break;
+                            case "/Бумага":
+                                answers[numOfTurns] = objects.Бумага;
+                                numOfTurns++;
+                                break;
+                            case "/Камень":
+                                answers[numOfTurns] = objects.Камень;
+                                numOfTurns++;
+                                break;
+                        }
+                        
+
 
                 }
             }
@@ -64,6 +92,17 @@ namespace CSharpTelegramBot
             }
             else
                 return;
+
+        }
+        private async void CountingDown() 
+        {
+            Program.Worker.SendTextMessageAsync(msg.Chat.Id, "Су", replyMarkup: GetButtons());
+            await Task.Delay(2000);
+            Program.Worker.SendTextMessageAsync(msg.Chat.Id, "Е");
+            await Task.Delay(2000);
+            Program.Worker.SendTextMessageAsync(msg.Chat.Id, "Фа", replyMarkup: Program.GetButtons());
+            CheckForWin();
+            EndGame();
 
         }
         private void EndGame()
@@ -82,6 +121,35 @@ namespace CSharpTelegramBot
 
                 }
             };
+        }
+        private IReplyMarkup GetButtons()
+        {
+            return new ReplyKeyboardMarkup
+            {
+                Keyboard = new List<List<KeyboardButton>>
+                {
+                    new List<KeyboardButton> { new KeyboardButton { Text = "/Камень" }, new KeyboardButton { Text = "/Ножницы" }, new KeyboardButton { Text = "/Бумага" } },
+
+                }
+            };
+        }
+        private void CheckForWin()
+        {
+            int enumerator = 0;
+            foreach (int a in answers)
+            {
+                enumerator += a;
+            }
+            if(enumerator == 1)
+                Program.Worker.SendTextMessageAsync(msg.Chat.Id, "Камень бьет ножницы", replyMarkup: Program.GetButtons());
+            else if (enumerator == 2)
+                Program.Worker.SendTextMessageAsync(msg.Chat.Id, "Ножницы режут бумагу", replyMarkup: Program.GetButtons());
+            else if (enumerator == 3)
+                Program.Worker.SendTextMessageAsync(msg.Chat.Id, "Бумага кроет камень", replyMarkup: Program.GetButtons());
+            else
+                Program.Worker.SendTextMessageAsync(msg.Chat.Id, "Ничья", replyMarkup: Program.GetButtons());
+            return;
+
         }
     }
 }

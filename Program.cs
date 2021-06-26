@@ -38,7 +38,7 @@ namespace CSharpTelegramBot
                 switch (message.Text)
                 {
                     case "/start":
-                        await Worker.SendTextMessageAsync(message.Chat.Id, "Чтобы поиграть крестики нолики набери /xoro", replyMarkup: GetButtons());
+                        await Worker.SendTextMessageAsync(message.Chat.Id, "Выбери игру", replyMarkup: GetButtons());
                         break;
                     case "/xoro":
                         if (!XOROchats.Contains(message.Chat.Id)) 
