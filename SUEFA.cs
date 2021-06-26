@@ -11,12 +11,12 @@ namespace CSharpTelegramBot
 {
     class SUEFA : Game
     {
-        int player = 0;
         int numOfTurns = 0;
         int numOfPlayers = 1;
         int gameId;
         Telegram.Bot.Types.Message msg;
         long[] playersId = new long[2];
+        Telegram.Bot.Types.Message[] playersMsg = new Telegram.Bot.Types.Message[2];
         enum objects
         {
             Ножницы,
@@ -40,69 +40,59 @@ namespace CSharpTelegramBot
         {
             var message = e.Message;
             if (gameId != Array.IndexOf(Program.SUEFAchats, message.Chat.Id))
-            {
                 return;
-            }
             if (numOfPlayers < 2 && message.Text == "/vote")
             {
                 playersId[numOfPlayers] = message.From.Id;
                 numOfPlayers++;
                 await Program.Worker.SendTextMessageAsync(message.Chat.Id, $"Игрок принят");
-                CountingDown();
+                CountDown();
                 return;
             }
-            else if (numOfPlayers == 2 && message.Text != "/vote")
+            else if (numOfPlayers == 2)
             {
                 if (!playersId.Contains(message.From.Id))
                     return;
-                if (message.Text == "/stop")
-                {
-                    await Program.Worker.SendTextMessageAsync(message.Chat.Id, "Прекращаю..", replyMarkup: Program.GetButtons());
-                    EndGame();
-                    return;
-                }
-                else
-                {
-                    Program.Worker.DeleteMessageAsync(message.Chat.Id, message.MessageId);
-                    if (numOfTurns < 2)
-                        switch (message.Text)
+                await Program.Worker.DeleteMessageAsync(message.Chat.Id, message.MessageId);
+                if (numOfTurns < 2)
+                    switch (message.Text)
                         {
                             case "/Ножницы":
                                 answers[numOfTurns] = objects.Ножницы;
+                                playersMsg[numOfTurns] = message;
                                 numOfTurns++;
                                 break;
                             case "/Бумага":
                                 answers[numOfTurns] = objects.Бумага;
+                                playersMsg[numOfTurns] = message;
                                 numOfTurns++;
                                 break;
                             case "/Камень":
                                 answers[numOfTurns] = objects.Камень;
+                                playersMsg[numOfTurns] = message;
                                 numOfTurns++;
                                 break;
-                        }
-                        
-
-
-                }
-            }
-            else if (numOfPlayers == 2 && message.Text == "/vote")
-            {
-                await Program.Worker.SendTextMessageAsync(message.Chat.Id, "Слишком много игроков");
-                return;
+                    }
             }
             else
                 return;
 
         }
-        private async void CountingDown() 
+        private async void CountDown() 
         {
-            Program.Worker.SendTextMessageAsync(msg.Chat.Id, "Су", replyMarkup: GetButtons());
-            await Task.Delay(2000);
-            Program.Worker.SendTextMessageAsync(msg.Chat.Id, "Е");
-            await Task.Delay(2000);
-            Program.Worker.SendTextMessageAsync(msg.Chat.Id, "Фа", replyMarkup: Program.GetButtons());
-            CheckForWin();
-            EndGame();
+            try
+            {
+                await Program.Worker.SendTextMessageAsync(msg.Chat.Id, "Су", replyMarkup: GetButtons());
+                await Task.Delay(2000);
+                await Program.Worker.SendTextMessageAsync(msg.Chat.Id, "Е");
+                await Task.Delay(2000);
+                await Program.Worker.SendTextMessageAsync(msg.Chat.Id, "Фа", replyMarkup: Program.GetButtons());
+                CheckForWin();
+            }
+            finally
+            {
+                EndGame();
+            }
 
         }
         private void EndGame()
@@ -141,13 +131,14 @@ namespace CSharpTelegramBot
                 enumerator += a;
             }
             if(enumerator == 1)
-                Program.Worker.SendTextMessageAsync(msg.Chat.Id, "Камень бьет ножницы", replyMarkup: Program.GetButtons());
+                Program.Worker.SendTextMessageAsync(msg.Chat.Id, $"Камень бьет ножницы, {playersMsg[Array.IndexOf(answers, objects.Камень)].From.Username} выиграл", replyMarkup: Program.GetButtons());
             else if (enumerator == 2)
-                Program.Worker.SendTextMessageAsync(msg.Chat.Id, "Ножницы режут бумагу", replyMarkup: Program.GetButtons());
+                Program.Worker.SendTextMessageAsync(msg.Chat.Id, $"Ножницы режут бумагу, {playersMsg[Array.IndexOf(answers, objects.Ножницы)].From.Username} выиграл", replyMarkup: Program.GetButtons());
             else if (enumerator == 3)
-                Program.Worker.SendTextMessageAsync(msg.Chat.Id, "Бумага кроет камень", replyMarkup: Program.GetButtons());
+                Program.Worker.SendTextMessageAsync(msg.Chat.Id, $"Бумага кроет камень, {playersMsg[Array.IndexOf(answers, objects.Бумага)].From.Username} выиграл", replyMarkup: Program.GetButtons());
             else
                 Program.Worker.SendTextMessageAsync(msg.Chat.Id, "Ничья", replyMarkup: Program.GetButtons());
+            numOfTurns = 0;
             return;
 
         }

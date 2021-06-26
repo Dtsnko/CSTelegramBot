@@ -42,7 +42,7 @@ namespace CSharpTelegramBot
                         break;
                     case "/xoro":
                         if (!XOROchats.Contains(message.Chat.Id)) 
-                            for (int i = 0; i < XOROchats.Length; i++) //finding free space in array games
+                            for (int i = 0; i < XOROchats.Length; i++) //finding free space in array of games
                             {
                                 if (XOROgames[i] == null)
                                 {
@@ -56,7 +56,7 @@ namespace CSharpTelegramBot
                         break;
                     case "/suefa":
                         if (!SUEFAchats.Contains(message.Chat.Id))
-                            for (int i = 0; i < SUEFAchats.Length; i++) //finding free space in array games
+                            for (int i = 0; i < SUEFAchats.Length; i++) //finding free space in array of games
                             {
                                 if (SUEFAgames[i] == null)
                                 {
