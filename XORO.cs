@@ -19,34 +19,28 @@ namespace CSharpTelegramBot
         int numOfTurns = 2;
         int numOfPlayers = 1;
         int gameId;
-        Telegram.Bot.Types.Message msg;
+        Telegram.Bot.Types.Message msgExample;
         Telegram.Bot.Types.Message[] playersId = new Telegram.Bot.Types.Message[2];
         public XORO(Telegram.Bot.Types.Message message, int id)
         {
-            msg = message;
+            msgExample = message;
             gameId = id;
-            playersId[0] = msg;
+            playersId[0] = msgExample;
         }
 
         public async Task StartGame()
         {
                 Program.Worker.OnMessage += XORO_OnMessage;
-                await Program.Worker.SendTextMessageAsync(msg.Chat.Id, "+--+--+ \n" +
+                await Program.Worker.SendTextMessageAsync(msgExample.Chat.Id, "+--+--+ \n" +
                 $"|{boxes[0]}|{boxes[1]}|{boxes[2]}| \n" +
                 "+---+---+ \n" +
                 $"|{boxes[3]}|{boxes[4]}|{boxes[5]}| \n" +
                 "+---+---+ \n" +
                 $"|{boxes[6]}|{boxes[7]}|{boxes[8]}| \n" +
                 "+---+---+ \n");
-                await Program.Worker.SendTextMessageAsync(msg.Chat.Id, $"Напиши /vote, чтобы быть игроком", replyMarkup: GetInvited());
+                await Program.Worker.SendTextMessageAsync(msgExample.Chat.Id, $"Напиши /vote, чтобы быть игроком", replyMarkup: GetInvited());
                 return;
         } 
-        public async Task ContinueGame()
-        {
-            Program.Worker.OnMessage -= XORO_OnMessage;
-            Program.Worker.OnMessage += XORO_OnMessage;
-            
-        }
 
         private IReplyMarkup GetButtons()
         {
@@ -76,39 +70,32 @@ namespace CSharpTelegramBot
         async void XORO_OnMessage(object sender, MessageEventArgs e)
         {
             var message = e.Message;
-            if (gameId != Array.IndexOf(Program.XOROchats, message.Chat.Id))
-            {
+            if (msgExample.Chat.Id != message.Chat.Id) // Проверка на соответствие сообщения чату
                 return;
-            }
-            if (numOfPlayers < 2 && message.Text == "/vote")
+            if (numOfPlayers < 2 && message.Text == "/vote") // Набор игроков
             {
                 playersId[numOfPlayers] = message;
                 numOfPlayers++;
                 await Program.Worker.SendTextMessageAsync(message.Chat.Id, "Игрок принят", replyMarkup: GetInvited());
                 if (numOfPlayers == 2)
-                   await Program.Worker.SendTextMessageAsync(message.Chat.Id, $"Игроки набраны, игрок {playersId[player].From.Username} ходит", replyMarkup: GetButtons());
+                   await Program.Worker.SendTextMessageAsync(message.Chat.Id, $"Игроки набраны, игрок {playersId[player].From.FirstName} ходит", replyMarkup: GetButtons());
                 return;
             }
-            else if (numOfPlayers == 2 && message.Text != "/vote")
+            else if (numOfPlayers == 2) //Если игроки набраны
             {
-                if (message.From.Username != playersId[player].From.Username)
+                if (message.From.Username != playersId[player].From.Username) // Проверка на игрока
                     return;
-                if (message.Text == "/stop")
+                if (message.Text == "/stop") // Если один из игроков захотел остановить игру
                 {
                     await Program.Worker.SendTextMessageAsync(message.Chat.Id, "Прекращаю..", replyMarkup: Program.GetButtons());
                     EndGame();
                     return;
                 }
-                else
+                else // Игрок походил
                 {
-                    await Program.Worker.SendTextMessageAsync(message.Chat.Id, $"Игрок {playersId[player].From.Username} походил", replyMarkup: GetButtons());
+                    await Program.Worker.SendTextMessageAsync(message.Chat.Id, $"{playersId[player].From.FirstName} походил", replyMarkup: GetButtons());
                     CheckBoxes(message);
                 }
-            }
-            else if (numOfPlayers == 2 && message.Text == "/vote")
-            {
-                await Program.Worker.SendTextMessageAsync(message.Chat.Id, "Слишком много игроков", replyMarkup: GetButtons());
-                return;
             }
             else
                 return;
@@ -130,47 +117,43 @@ namespace CSharpTelegramBot
                 }
                 else if (i+1 == boxes.Length && boxes[i] != text)
                 {
-                    Program.Worker.SendTextMessageAsync(message.Chat.Id, $"Wrong, choose correctly", replyMarkup: GetButtons());
+                    Program.Worker.SendTextMessageAsync(message.Chat.Id, $"Не верно, выбери заново", replyMarkup: GetButtons());
                     return;
                 }
             }
             CheckForWin(message);
         }
-        void CheckForWin(Telegram.Bot.Types.Message message)
+        async void  CheckForWin(Telegram.Bot.Types.Message message)
         {
             int checker = 0;
-            for (int i = 0; i < boxes.Length; i++)
+            for (int i = 0; i < boxes.Length; i++) //проверка на то, заполнены ли все боксы ответами от игроков
             {
                 if(boxes[i] != Convert.ToString(i+1))
-                {
                     checker++;
-                }
             }
-            if (checker == 9)
-            {
-                Program.Worker.SendTextMessageAsync(message.Chat.Id, $"Ничья", replyMarkup: Program.GetButtons());
-                EndGame();
-                return;
-            }
-            if (boxes[0] == boxes[4] && boxes[4] == boxes[8] ||
+            if (boxes[0] == boxes[4] && boxes[4] == boxes[8] || //проверяем условия выиграша, если выиграл заканчиваем игру
                 boxes[0] == boxes[1] && boxes[1] == boxes[2] ||
                 boxes[0] == boxes[3] && boxes[3] == boxes[6] ||
                 boxes[1] == boxes[4] && boxes[4] == boxes[7] ||
                 boxes[2] == boxes[4] && boxes[4] == boxes[6] ||
                 boxes[2] == boxes[5] && boxes[5] == boxes[8] ||
                 boxes[3] == boxes[4] && boxes[4] == boxes[5] ||
-                boxes[6] == boxes[7] && boxes[7] == boxes[8]
-
-            )
+                boxes[6] == boxes[7] && boxes[7] == boxes[8])
             {
-                Program.Worker.SendTextMessageAsync(message.Chat.Id, $"Игрок {playersId[player].From.Username} выиграл", replyMarkup: Program.GetButtons());
+                await Program.Worker.SendTextMessageAsync(message.Chat.Id, $"Игрок {playersId[player].From.FirstName} выиграл", replyMarkup: Program.GetButtons());
                 EndGame();
             }
             else
             {
-                ShowBoxes(message);
+                ShowBoxes();
+                if (checker == 9) //если заполнены прекращаем игру
+                {
+                    await Program.Worker.SendTextMessageAsync(message.Chat.Id, $"Ничья", replyMarkup: Program.GetButtons());
+                    EndGame();
+                    return;
+                }
                 ChangePlayer();
-                Program.Worker.SendTextMessageAsync(message.Chat.Id, $"Игрок {playersId[player].From.Username} ходит");
+                await Program.Worker.SendTextMessageAsync(message.Chat.Id, $"Игрок {playersId[player].From.FirstName} ходит");
             }
         }
         void ChangePlayer()
@@ -178,9 +161,9 @@ namespace CSharpTelegramBot
             numOfTurns++;
             player = numOfTurns % 2;
         }
-        void ShowBoxes(Telegram.Bot.Types.Message message)
+        void ShowBoxes()
         {
-            Program.Worker.SendTextMessageAsync(message.Chat.Id, "+--+--+ \n" +
+            Program.Worker.SendTextMessageAsync(msgExample.Chat.Id, "+--+--+ \n" +
             $"|{boxes[0]}|{boxes[1]}|{boxes[2]}| \n" +
             "+--+--+ \n" +
             $"|{boxes[3]}|{boxes[4]}|{boxes[5]}| \n" +

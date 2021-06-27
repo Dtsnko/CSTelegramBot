@@ -131,11 +131,11 @@ namespace CSharpTelegramBot
                 enumerator += a;
             }
             if(enumerator == 1)
-                Program.Worker.SendTextMessageAsync(msg.Chat.Id, $"Камень бьет ножницы, {playersMsg[Array.IndexOf(answers, objects.Камень)].From.Username} выиграл", replyMarkup: Program.GetButtons());
+                Program.Worker.SendTextMessageAsync(msg.Chat.Id, $"Камень бьет ножницы, {playersMsg[Array.IndexOf(answers, objects.Камень)].From.FirstName} выиграл", replyMarkup: Program.GetButtons());
             else if (enumerator == 2)
-                Program.Worker.SendTextMessageAsync(msg.Chat.Id, $"Ножницы режут бумагу, {playersMsg[Array.IndexOf(answers, objects.Ножницы)].From.Username} выиграл", replyMarkup: Program.GetButtons());
+                Program.Worker.SendTextMessageAsync(msg.Chat.Id, $"Ножницы режут бумагу, {playersMsg[Array.IndexOf(answers, objects.Ножницы)].From.FirstName} выиграл", replyMarkup: Program.GetButtons());
             else if (enumerator == 3)
-                Program.Worker.SendTextMessageAsync(msg.Chat.Id, $"Бумага кроет камень, {playersMsg[Array.IndexOf(answers, objects.Бумага)].From.Username} выиграл", replyMarkup: Program.GetButtons());
+                Program.Worker.SendTextMessageAsync(msg.Chat.Id, $"Бумага кроет камень, {playersMsg[Array.IndexOf(answers, objects.Бумага)].From.FirstName} выиграл", replyMarkup: Program.GetButtons());
             else
                 Program.Worker.SendTextMessageAsync(msg.Chat.Id, "Ничья", replyMarkup: Program.GetButtons());
             numOfTurns = 0;
