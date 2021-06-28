@@ -125,21 +125,28 @@ namespace CSharpTelegramBot
         }
         private void CheckForWin()
         {
-            int enumerator = 0;
-            foreach (int a in answers)
+            try
             {
-                enumerator += a;
+                int enumerator = 0;
+                foreach (int a in answers)
+                {
+                    enumerator += a;
+                }
+                if (enumerator == 1)
+                    Program.Worker.SendTextMessageAsync(msg.Chat.Id, $"Камень бьет ножницы, {playersMsg[Array.IndexOf(answers, objects.Камень)].From.FirstName} выиграл", replyMarkup: Program.GetButtons());
+                else if (enumerator == 2)
+                    Program.Worker.SendTextMessageAsync(msg.Chat.Id, $"Ножницы режут бумагу, {playersMsg[Array.IndexOf(answers, objects.Ножницы)].From.FirstName} выиграл", replyMarkup: Program.GetButtons());
+                else if (enumerator == 3)
+                    Program.Worker.SendTextMessageAsync(msg.Chat.Id, $"Бумага кроет камень, {playersMsg[Array.IndexOf(answers, objects.Бумага)].From.FirstName} выиграл", replyMarkup: Program.GetButtons());
+                else
+                    Program.Worker.SendTextMessageAsync(msg.Chat.Id, "Ничья", replyMarkup: Program.GetButtons());
+                numOfTurns = 0;
+                return;
             }
-            if(enumerator == 1)
-                Program.Worker.SendTextMessageAsync(msg.Chat.Id, $"Камень бьет ножницы, {playersMsg[Array.IndexOf(answers, objects.Камень)].From.FirstName} выиграл", replyMarkup: Program.GetButtons());
-            else if (enumerator == 2)
-                Program.Worker.SendTextMessageAsync(msg.Chat.Id, $"Ножницы режут бумагу, {playersMsg[Array.IndexOf(answers, objects.Ножницы)].From.FirstName} выиграл", replyMarkup: Program.GetButtons());
-            else if (enumerator == 3)
-                Program.Worker.SendTextMessageAsync(msg.Chat.Id, $"Бумага кроет камень, {playersMsg[Array.IndexOf(answers, objects.Бумага)].From.FirstName} выиграл", replyMarkup: Program.GetButtons());
-            else
-                Program.Worker.SendTextMessageAsync(msg.Chat.Id, "Ничья", replyMarkup: Program.GetButtons());
-            numOfTurns = 0;
-            return;
+            catch
+            {
+                EndGame();
+            }
 
         }
     }

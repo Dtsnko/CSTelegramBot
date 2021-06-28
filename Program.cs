@@ -12,10 +12,11 @@ namespace CSharpTelegramBot
     static class Program
     {
         public static TelegramBotClient Worker = new TelegramBotClient("1743603163:AAF6GACSicfQPets7eYxjhiV-YTy3N8AL48");
-        public static long[] XOROchats = new long[10];
         public static XORO[] XOROgames = new XORO[10];
-        public static long[] SUEFAchats = new long[10];
+        public static long[] XOROchats = new long[10];
         public static SUEFA[] SUEFAgames = new SUEFA[10];
+        public static long[] SUEFAchats = new long[10];
+
         static void Main(string[] args)
         {
             var me = Worker.GetMeAsync().Result;
