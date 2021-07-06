@@ -18,9 +18,10 @@ namespace CSharpTelegramBot
         int player = 0;
         int numOfTurns = 2;
         int numOfPlayers = 1;
-        int gameId;
         Telegram.Bot.Types.Message msgExample;
         Telegram.Bot.Types.Message[] playersId = new Telegram.Bot.Types.Message[2];
+        public const int generalGameId = 1;
+
         public XORO(Telegram.Bot.Types.Message message, int id)
         {
             msgExample = message;
@@ -28,7 +29,7 @@ namespace CSharpTelegramBot
             playersId[0] = msgExample;
         }
 
-        public async Task StartGame()
+        public override async void StartGame()
         {
                 Program.Worker.OnMessage += XORO_OnMessage;
                 await Program.Worker.SendTextMessageAsync(msgExample.Chat.Id, "+--+--+ \n" +
@@ -42,7 +43,7 @@ namespace CSharpTelegramBot
                 return;
         } 
 
-        private IReplyMarkup GetButtons()
+        IReplyMarkup GetButtons()
         {
             return new ReplyKeyboardMarkup
             {
@@ -55,7 +56,7 @@ namespace CSharpTelegramBot
                 }
             };
         }
-        private IReplyMarkup GetInvited()
+        IReplyMarkup GetInvited()
         {
             return new ReplyKeyboardMarkup
             {
@@ -171,11 +172,11 @@ namespace CSharpTelegramBot
             $"|{boxes[6]}|{boxes[7]}|{boxes[8]}| \n" +
             "+--+--+ \n", replyMarkup: GetButtons());
         }
-        void EndGame()
+        public override void EndGame()
         {
             Program.Worker.OnMessage -= XORO_OnMessage;
-            Program.XOROchats[gameId] = 0;
-            Program.XOROgames[gameId] = null;
+            Program.chats[gameId] = 0;
+            Program.games[gameId] = null;
         }
         
 

@@ -12,11 +12,11 @@ namespace CSharpTelegramBot
     class SUEFA : Game
     {
         int numOfTurns = 0;
-        int numOfPlayers = 1;
-        int gameId;
+        int numOfPlayers = 0;
         Telegram.Bot.Types.Message msg;
         long[] playersId = new long[2];
         Telegram.Bot.Types.Message[] playersMsg = new Telegram.Bot.Types.Message[2];
+        public const int generalGameId = 2;
         enum objects
         {
             Ножницы,
@@ -24,13 +24,15 @@ namespace CSharpTelegramBot
             Бумага
         }
         objects[] answers = new objects[2];
-        public SUEFA (Telegram.Bot.Types.Message message, int id)
+
+        public SUEFA (Telegram.Bot.Types.Message message, int gameId)
         {
             msg = message;
-            gameId = id;
+            this.gameId = gameId;
             playersId[0] = msg.From.Id;
+            numOfPlayers++;
         }
-        public async void StartGame()
+        public override async void StartGame()
         {
            Program.Worker.OnMessage += SUEFA_OnMessage;
            await Program.Worker.SendTextMessageAsync(msg.Chat.Id, "/vote чтобы стать вторым игроком", replyMarkup: GetInvited()) ;
@@ -39,7 +41,7 @@ namespace CSharpTelegramBot
         private async void SUEFA_OnMessage(object sender, MessageEventArgs e)
         {
             var message = e.Message;
-            if (gameId != Array.IndexOf(Program.SUEFAchats, message.Chat.Id))
+            if (gameId != Array.IndexOf(Program.chats, message.Chat.Id))
                 return;
             if (numOfPlayers < 2 && message.Text == "/vote")
             {
@@ -95,11 +97,11 @@ namespace CSharpTelegramBot
             }
 
         }
-        private void EndGame()
+        public override void EndGame()
         {
             Program.Worker.OnMessage -= SUEFA_OnMessage;
-            Program.SUEFAchats[gameId] = 0;
-            Program.SUEFAgames[gameId] = null;
+            Program.chats[gameId] = 0;
+            Program.games[gameId] = null;
         }
         private IReplyMarkup GetInvited()
         {

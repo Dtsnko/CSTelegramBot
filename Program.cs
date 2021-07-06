@@ -12,10 +12,9 @@ namespace CSharpTelegramBot
     static class Program
     {
         public static TelegramBotClient Worker = new TelegramBotClient("1743603163:AAF6GACSicfQPets7eYxjhiV-YTy3N8AL48");
-        public static XORO[] XOROgames = new XORO[10];
-        public static long[] XOROchats = new long[10];
-        public static SUEFA[] SUEFAgames = new SUEFA[10];
-        public static long[] SUEFAchats = new long[10];
+
+        public static Game[] games = new Game[10];
+        public static long[] chats = new long[10];
 
         static void Main(string[] args)
         {
@@ -27,7 +26,7 @@ namespace CSharpTelegramBot
 
         }
 
-        public async static void Worker_OnMessage(object sender, Telegram.Bot.Args.MessageEventArgs e)
+        async static void Worker_OnMessage(object sender, Telegram.Bot.Args.MessageEventArgs e)
         {
             var message = e.Message;
             if (message == null)
@@ -42,33 +41,10 @@ namespace CSharpTelegramBot
                         await Worker.SendTextMessageAsync(message.Chat.Id, "Выбери игру", replyMarkup: GetButtons());
                         break;
                     case "/xoro":
-
-                        if (!XOROchats.Contains(message.Chat.Id)) 
-                            for (int i = 0; i < XOROchats.Length; i++) //finding free space in array of games
-                            {
-                                if (XOROgames[i] == null)
-                                {
-                                    await Worker.SendTextMessageAsync(message.Chat.Id, $"Игра создана, {i}");
-                                    XOROgames[i] = new XORO(message, i); //creating new game
-                                    XOROchats[i] = message.Chat.Id; //creating space for new chat
-                                    await XOROgames[i].StartGame();
-                                    break;
-                                }
-                            }
+                        CreateMatchmaking(message, XORO.generalGameId);
                         break;
                     case "/suefa":
-                        if (!SUEFAchats.Contains(message.Chat.Id))
-                            for (int i = 0; i < SUEFAchats.Length; i++) //finding free space in array of games
-                            {
-                                if (SUEFAgames[i] == null)
-                                {
-                                    await Worker.SendTextMessageAsync(message.Chat.Id, $"Игра создана, {i}");
-                                    SUEFAgames[i] = new SUEFA(message, i); //creating new game
-                                    SUEFAchats[i] = message.Chat.Id; //creating space for new chat
-                                    SUEFAgames[i].StartGame();
-                                    break;
-                                }
-                            }
+                        CreateMatchmaking(message, SUEFA.generalGameId);
                         break;
 
                     default:
@@ -88,5 +64,31 @@ namespace CSharpTelegramBot
                 }
             };
         }
+        async static void CreateMatchmaking(Telegram.Bot.Types.Message message, int generalGameId)
+        {
+            if (!chats.Contains(message.Chat.Id))
+                for (int i = 0; i < chats.Length; i++) //finding free space in array of games
+                {
+                    if (games[i] == null)
+                    {
+                        await Worker.SendTextMessageAsync(message.Chat.Id, $"Игра создана, {i}");
+                        switch(generalGameId)
+                        {
+                            case XORO.generalGameId:
+                                games[i] = new XORO(message, i);
+                                break;
+                            case SUEFA.generalGameId:
+                                games[i] = new SUEFA(message, i);
+                                break;
+                            default:
+                                break;
+                        }
+                        chats[i] = message.Chat.Id; //creating space for new chat
+                        games[i].StartGame();
+                        break;
+                    }
+                }
+        }
+
     }
 }
