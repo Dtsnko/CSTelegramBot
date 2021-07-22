@@ -14,14 +14,13 @@ namespace CSharpTelegramBot
 {
     class XORO : Game
     {
+        public const int generalGameId = (int)Program.GameType.XORO;
         string[] boxes = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
         int player = 0;
         int numOfTurns = 2;
         int numOfPlayers = 1;
         Telegram.Bot.Types.Message msgExample;
         Telegram.Bot.Types.Message[] playersId = new Telegram.Bot.Types.Message[2];
-        public const int generalGameId = 1;
-
         public XORO(Telegram.Bot.Types.Message message, int id)
         {
             msgExample = message;

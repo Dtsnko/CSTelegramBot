@@ -11,12 +11,12 @@ namespace CSharpTelegramBot
 {
     class SUEFA : Game
     {
+        public const int generalGameId = (int)Program.GameType.SUEFA;
         int numOfTurns = 0;
         int numOfPlayers = 0;
         Telegram.Bot.Types.Message msg;
         long[] playersId = new long[2];
         Telegram.Bot.Types.Message[] playersMsg = new Telegram.Bot.Types.Message[2];
-        public const int generalGameId = 2;
         enum objects
         {
             Ножницы,
@@ -131,9 +131,7 @@ namespace CSharpTelegramBot
             {
                 int enumerator = 0;
                 foreach (int a in answers)
-                {
                     enumerator += a;
-                }
                 if (enumerator == 1)
                     Program.Worker.SendTextMessageAsync(msg.Chat.Id, $"Камень бьет ножницы, {playersMsg[Array.IndexOf(answers, objects.Камень)].From.FirstName} выиграл", replyMarkup: Program.GetButtons());
                 else if (enumerator == 2)

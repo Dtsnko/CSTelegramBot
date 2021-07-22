@@ -15,6 +15,11 @@ namespace CSharpTelegramBot
 
         public static Game[] games = new Game[10];
         public static long[] chats = new long[10];
+        public enum GameType
+        {
+            XORO,
+            SUEFA
+        }
 
         static void Main(string[] args)
         {
